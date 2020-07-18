@@ -3,7 +3,9 @@ unzip file.zip                                       && \
 rm file.zip
 cp -r ./wordpress/wp-content/themes/* ./themes/ && \
 cp -r ./wordpress/wp-content/plugins/* ./plugins/ && \
-cp ./wordpress/wp-config-sample.php ./wordpress/wp-config.php
+cp ./wordpress/wp-config-sample.php ./wordpress/wp-config.php && \
+mkdir themes && \
+mkdir plugins && \
 sed -i 's/password_here/wordpress_password/g' ./wordpress/wp-config.php && \
 sed -i 's/database_name_here/wordpress_db/g' ./wordpress/wp-config.php && \
 sed -i 's/username_here/wordpress_user/g' ./wordpress/wp-config.php
