@@ -5,9 +5,10 @@ services:
     container_name: 'local-wordpress-db'
     volumes:
       - "./docker-compose/mysql:/var/lib/mysql"
+      - "./docker-compose/dumps:/tmp/dumps"
     ports:
-      - 18766:3306
-    restart: always
+      - 3306:3306
+    restart: always 
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
       MYSQL_DATABASE: wordpress_db
@@ -22,11 +23,24 @@ services:
     ports:
       - '80:80'
     environment:
-      WORDPRESS_DB_HOST: 'db:3306'
+      WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress_user
       WORDPRESS_DB_PASSWORD: wordpress_password
       WORDPRESS_DB_NAME: wordpress_db
     volumes:
       - "./wordpress:/var/www/html"
+      - "./docker-compose/config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini"
       - "./plugins:/var/www/html/wp-content/plugins"
       - "./themes:/var/www/html/wp-content/themes"
+
+  wpcli:
+    container_name: 'wordpress-cli'
+    image: wordpress:cli
+    volumes:
+      - "./docker-compose/config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini"
+      - "./wordpress:/var/www/html"
+      - "./plugins:/var/www/html/wp-content/plugins"
+      - "./themes:/var/www/html/wp-content/themes"
+    depends_on:
+      - db
+      - wordpress

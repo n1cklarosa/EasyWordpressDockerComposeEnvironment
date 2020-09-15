@@ -4,11 +4,13 @@ It comes with a setup script to get your going on linux and macos in a few secon
 
 Read more info on this on my blog here (here)[https://blog.nicklarosa.net/articles/easy-wordpress-docker-compose/]
 
-**This project leverages the work from done in the following two projects found on DockerHub**
+**This project leverages the work from done in the following three projects found on DockerHub**
 
 [Mysql5.7](https://hub.docker.com/r/ymnoor21/mysql5.7/)
 
-[local-wordpress](https://hub.docker.com/r/alfiemx/local-wordpress)
+[Local Wordpress](https://hub.docker.com/r/alfiemx/local-wordpress)
+
+[Wordpress CLI](https://hub.docker.com/_/wordpress)
 
 ### Requirements
 
@@ -83,7 +85,7 @@ docker-compose down
 
 #### Connecting with MYSQL
 
-The docker-compose file will setup a MYSQL server on port 18766 (this can be altered in the `docker-compose.yml` file). You can connect to the server using the following details
+The docker-compose file will setup a MYSQL server on port 3306 (this can be altered in the `docker-compose.yml` file). You can connect to the server using the following details
 
 - Hostname: 127.0.0.1
 - Username: wordpress_user
@@ -93,31 +95,65 @@ The docker-compose file will setup a MYSQL server on port 18766 (this can be alt
 ![Image showing Mysql Credentials](mysql-config.jpg)
 
 
-
 #### Importing a .sql file using the Command Line
 
-Example command 
+Example command using local mysql install (ie - not using a docker installtion of mysql)
 
 ```/path/to/mysql -h 127.0.0.1 -u wordpress_user -p wordpress_dv < data.sql```
 
-#### PHP Error monitoring
+#### Importing a .sql file using the Command Line
 
-On mac and linux, you can use the following command to show a continuous reading of errors on your Wordpress install.
+Exporting the database
 
-```
-docker logs -f CONTAINER_ID 2>&1 >/dev/null | grep -i error
-```
+#### Finding docker container ID
 
-Swap CONTAINER_ID with the ID docker has assigned to your running container. To find this, run the following command
+To find the ID of your container, run the following command
 
 ```
 docker ps
 ```
 
-You will see an output like the following, we are looking for the wordpress:latest container. In this instance id will be *ed72061e0466*
+You will see an output like the following, we are looking for the wordpress:latest container. 
 
 ```
 ed72061e0466        wordpress:latest    "docker-entrypoint.s…"   7 hours ago         Up 7 hours          0.0.0.0:80->80/tcp                   local-wordpress
 3b2678b45ad2        mysql:5.7           "docker-entrypoint.s…"   7 hours ago         Up 7 hours          33060/tcp, 0.0.0.0:18766->3306/tcp   local-wordpress-db
 ```
 
+You can see from our above example, that the container ID for wordpress is *ed72061e0466* and the database container is *3b2678b45ad2*
+
+#### PHP Error monitoring
+
+On mac and linux, you can use the following command to show a continuous reading of errors on your Wordpress install. Grab the ID from your wordpress container using the above instructions.
+
+```
+docker logs -f CONTAINER_ID 2>&1 >/dev/null | grep -i error
+```
+
+Swap CONTAINER_ID with the ID docker has assigned to your running container. Here is an example using the above example
+
+```
+docker logs -f ed72061e0466 2>&1 >/dev/null | grep -i error
+```
+
+#### WP Cli
+
+Example setup of test instance using WP-Cli. This can be run after the setup.sh script to setup your wordpress instance.
+
+```
+docker-compose run wpcli wp core install --path=/var/www/html  --url=http://localhost --title="Local Wordpress" --admin_user=admin --admin_email=my@email.com --admin_password=mypassword 
+```
+
+#### Exporting the db using the command line
+
+Using the instructions above, find your container ID for the local-wordpress-db  container(the example above shows *3b2678b45ad2*)
+
+```
+docker exec CONTAINER_ID /usr/bin/mysqldump -u root --password=somewordpress wordpress_db > backup.sql
+```
+
+Example of command with container ID from above example of `ps` output
+
+```
+docker exec 3b2678b45ad2 /usr/bin/mysqldump -u root --password=somewordpress wordpress_db > backup.sql
+```
