@@ -1,6 +1,6 @@
 Here is docker-compose file that will containerise all the services required to run a local wordpress development enviroment. All your theme, plugin and upload files are stored in your local file tree and can be backed up and edited as your normally would.
 
-It comes with a setup script to get your going on linux and macos in a few seconds, windows users will need to follow a few extra steps.
+It comes with a setup script to get you going on Linux and Macos in a few seconds, windows users will need to follow a few extra steps.
 
 Read more info on this on my blog here (here)[https://blog.nicklarosa.net/articles/easy-wordpress-docker-compose/]
 
@@ -97,15 +97,11 @@ The docker-compose file will setup a MYSQL server on port 3306 (this can be alte
 
 #### Importing a .sql file using the Command Line
 
-Example command using local mysql install (ie - not using a docker installtion of mysql)
+Example command using local mysql install (ie - not using a docker installation of mysql)
 
 ```/path/to/mysql -h 127.0.0.1 -u wordpress_user -p wordpress_dv < data.sql```
 
-#### Importing a .sql file using the Command Line
-
-Exporting the database
-
-#### Finding docker container ID
+#### Finding Docker Container ID
 
 To find the ID of your container, run the following command
 
